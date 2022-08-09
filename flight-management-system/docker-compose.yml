@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: subha14092000/flightmanagement
+        ports:
+        - name: http-port
+          containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-servicedb
+spec:
+  ports:
+  - port: 8080
+    nodePort: 32001
+    targetPort: http-port
+    protocol: TCP
+  selector:
+    app: wordpress
+  type: NodePort

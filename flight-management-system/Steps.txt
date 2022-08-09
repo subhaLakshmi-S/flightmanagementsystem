@@ -1,0 +1,42 @@
+cd /opt/
+
+sudo -i
+
+yum update -y
+amazon-linux-extras install docker -y
+service docker start
+usermod -a -G docker ec2-user
+chkconfig docker on
+
+
+sudo yum install git -y
+sudo yum install zip unzip wget -y
+sudo yum install java-1.8.0-devel -y
+sudo /usr/sbin/alternatives --config java
+sudo /usr/sbin/alternatives --config javac
+
+yum erase maven -y
+
+wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.zip
+ls -ltr
+unzip apache-maven-3.8.6-bin.zip
+
+echo "PATH=$PATH:/opt/apache-maven-3.8.6/bin" >> ~/.bash_profile
+echo "export PATH" >> ~/.bash_profile
+source ~/.bash_profile
+
+java
+javac
+
+git clone https://github.com/awsdevopsbykumar/SpringBootRestAPIMySQLDockerKubernetes.git
+cd SpringBootRestAPIMySQLDockerKubernetes/SpringBootRestAPIMySQLDockerKubernetes
+
+ mvn clean package  -Dmaven.test.skip=true
+
+docker login
+
+docker image build -t awsdevopsbykumar/springbootmysqldockerkubernetes .
+docker push awsdevopsbykumar/springbootmysqldockerkubernetes
+
+docker container run --name springbootmysqldockerkubernetes -p 8080:8080 -d awsdevopsbykumar/springbootmysqldockerkubernetes
+docker container logs springbootmysqldockerkubernetes
